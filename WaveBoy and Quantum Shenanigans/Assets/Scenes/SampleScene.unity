@@ -174,7 +174,7 @@ MonoBehaviour:
   combo: 0
   MaxCombo: 0
   gameState: 0
-  difficulty: 0
+  difficulty: 2
   act: 0
   Spawnrate: 2
   particleSOList: {fileID: 11400000, guid: 5bc9af339f71bbf489d2f0ee73f5eaa5, type: 2}
