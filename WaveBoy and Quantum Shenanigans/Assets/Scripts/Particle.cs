@@ -11,22 +11,21 @@ public class Particle : MonoBehaviour
     protected Rigidbody2D Rb;
     protected float speed = 4f;
     protected bool isEnemy = true;
+
     [SerializeField] protected GameManager.IsWhat isWhat;
     [SerializeField] protected ParticleSOList particleSOList;
 
-    protected float Timer = 1f;
-    private float smooth = 100f;
+    protected float timerToSetAsEnemy = 1f;
+    protected float timerPhotonToChase = 0.5f;
+    protected float smooth = 100f;
 
 
     void Awake()
     {
         Rb = GetComponent<Rigidbody2D>();
-        Timer = 1f;
     }
 
-    
-
-    void Update()
+        void Update()
     {
         if (isEnemy && (isWhat == GameManager.IsWhat.Electron || isWhat == GameManager.IsWhat.Positron))
         {
@@ -42,18 +41,23 @@ public class Particle : MonoBehaviour
 
         if (!isEnemy)
         {
-            Timer -= Time.deltaTime;
-            if (Timer <= 0)
+            timerToSetAsEnemy -= Time.deltaTime;
+            if (timerToSetAsEnemy <= 0)
             {
                 isEnemy = true;
             }
         }
 
+        timerPhotonToChase -= Time.deltaTime;
+        if (timerPhotonToChase <= 0)
+        {
+
+        }
     }
 
     private void FixedUpdate()
     {
-        if (isEnemy)
+        if (isEnemy && (isWhat == GameManager.IsWhat.Electron || isWhat == GameManager.IsWhat.Positron))
         {
             Rb.velocity = Vector3.Lerp(vel, dir, smooth * Time.deltaTime) * speed;
         }
@@ -104,7 +108,7 @@ public class Particle : MonoBehaviour
 
     public void SetTimerTo(float timer)
     {
-        Timer = timer;
+        timerToSetAsEnemy = timer;
     }
 
     public bool IsEnemy()

@@ -178,6 +178,8 @@ MonoBehaviour:
   act: 0
   Spawnrate: 2
   particleSOList: {fileID: 11400000, guid: 5bc9af339f71bbf489d2f0ee73f5eaa5, type: 2}
+  randomSpawnPosition: {x: 0, y: 0}
+  aimAtPlayer: {x: 0, y: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,7 +286,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -850,11 +852,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4255247220884644872, guid: 50e0aa3df778d6b4c9120bdca354eca1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.31
       objectReference: {fileID: 0}
     - target: {fileID: 4255247220884644872, guid: 50e0aa3df778d6b4c9120bdca354eca1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.06
       objectReference: {fileID: 0}
     - target: {fileID: 4255247220884644872, guid: 50e0aa3df778d6b4c9120bdca354eca1, type: 3}
       propertyPath: m_LocalPosition.z

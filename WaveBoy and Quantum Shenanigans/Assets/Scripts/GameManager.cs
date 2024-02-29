@@ -35,6 +35,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ParticleSOList particleSOList;
 
 
+    public Vector2 randomSpawnPosition;
+    public Vector2 aimAtPlayer;
+
+
     // Start is called before the first frame update
 
     void Awake()
@@ -77,7 +81,9 @@ public class GameManager : MonoBehaviour
     {
         if (Random.Range(0, 10) > 5)
         {
-            Particle.SpawnParticle(particleSOList.particleSOList[Random.Range(0,2+ difficulty)], new Vector2(x * Random.Range(8, 12), y * Random.Range(8, 12)), new Vector2(x * Random.Range(8, 12), y * Random.Range(8, 12)), true, 0);
+            randomSpawnPosition = new Vector2(x * Random.Range(8, 12), y * Random.Range(8, 12));
+            aimAtPlayer = -(randomSpawnPosition - (Vector2) Player.Instance.transform.position);
+            Particle.SpawnParticle(particleSOList.particleSOList[Random.Range(0,2+ difficulty)], randomSpawnPosition, aimAtPlayer, true, 10f);
             //Wavelet clone = Instantiate(wavelet, new Vector3(x * Random.Range(4, 8), y * Random.Range(4, 8)), Quaternion.identity);
             //clone.Starter(true, (float)Random.Range(10, 20) / 10, Random.Range(0, 2+difficulty));
         }
