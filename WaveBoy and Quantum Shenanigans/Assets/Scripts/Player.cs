@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     private float aimingAngle;
     private GameManager.IsWhat isWhat;
 
+    private Vector2 moveDir;
 
     // Start is called before the first frame update
     void Awake()
@@ -47,6 +48,11 @@ public class Player : MonoBehaviour
     private void Start()
     {
         isWhat = GameManager.IsWhat.Player;
+    }
+
+    private void Update()
+    {
+        rb.velocity = moveDir;
     }
 
 
@@ -99,7 +105,7 @@ public class Player : MonoBehaviour
 
     private void OnMove(InputValue value)
     {
-        rb.velocity = value.Get<Vector2>() * moveSpeed;
+        moveDir = value.Get<Vector2>().normalized * moveSpeed;
     }
 
     private void OnAim(InputValue value)
@@ -164,7 +170,6 @@ public class Player : MonoBehaviour
                 DamageControl(isWhat, -1, 5);
                 break;
             case GameManager.IsWhat.Electron:
-                Debug.Log(isWhat);
                 DamageControl(GameManager.IsWhat.Positron, -1, 5);
                 break;
             case GameManager.IsWhat.Positron:

@@ -19,6 +19,23 @@ public class GameManager : MonoBehaviour
         Player
     }
 
+    public enum GameState
+    {
+        Pause,
+        Playing,
+        GameOver
+    }
+
+    public enum PlayingState
+    {
+        Fase1,
+        Fase2,
+        Fase3,
+        Boss1,
+        Fase4,
+        Fase5,
+        Boss2
+    }
 
     public static GameManager instance { get; private set; }
     public float Timer;

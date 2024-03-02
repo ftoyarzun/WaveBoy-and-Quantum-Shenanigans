@@ -16,8 +16,8 @@ public class Particle : MonoBehaviour
     [SerializeField] protected ParticleSOList particleSOList;
 
     protected float timerToSetAsEnemy = 1f;
-    protected float timerPhotonToChase = 0.5f;
     protected float smooth = 100f;
+    protected float lightVelocity = 5f;
 
 
     void Awake()
@@ -36,6 +36,15 @@ public class Particle : MonoBehaviour
             vel.Normalize();
 
         }
+
+        if (isEnemy && !(isWhat == GameManager.IsWhat.Electron || isWhat == GameManager.IsWhat.Positron))
+        {
+            if (Rb.velocity.magnitude > 0.01f)
+            {
+                Rb.velocity = Rb.velocity / Rb.velocity.magnitude * lightVelocity;
+            }
+        }
+
         float angle = Mathf.Atan2(Rb.velocity[1], Rb.velocity[0]) * Mathf.Rad2Deg;
         Rb.rotation = angle;
 
@@ -46,12 +55,6 @@ public class Particle : MonoBehaviour
             {
                 isEnemy = true;
             }
-        }
-
-        timerPhotonToChase -= Time.deltaTime;
-        if (timerPhotonToChase <= 0)
-        {
-
         }
     }
 
