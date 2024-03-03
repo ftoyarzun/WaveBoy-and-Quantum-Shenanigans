@@ -25,7 +25,11 @@ public class TextWriter : MonoBehaviour
 
     private void Start()
     {
-        uiAssistant.OnClickInText += UiAssistant_OnClickInText;
+        if (Loader.GetScene() == Loader.Scene.GameScene)
+        {
+            //uiAssistant.OnClickInText += UiAssistant_OnClickInText;
+        }
+        
     }
 
     private void UiAssistant_OnClickInText(object sender, System.EventArgs e)

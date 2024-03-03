@@ -126,7 +126,7 @@ public class Player : MonoBehaviour
     {
         if (Timer < Time.time)
         {
-            shoot(GameManager.IsWhat.Electron, aim);
+            shoot(GameManager.IsWhat.Photon_up, aim);
         }
     }
 
@@ -134,23 +134,23 @@ public class Player : MonoBehaviour
     {
         if (Timer < Time.time)
         {
-            shoot(GameManager.IsWhat.Positron, aim);
+            shoot(GameManager.IsWhat.Photon_down, aim);
         }
     }
 
     private void OnFire3(InputValue value)
     {
-        if (Timer < Time.time && GameManager.instance.difficulty > 0)
+        if (Timer < Time.time)
         {
-            shoot(GameManager.IsWhat.Photon_up, aim);
+            shoot(GameManager.IsWhat.Electron, aim);
         }
     }
 
     private void OnFire4(InputValue value)
     {
-        if (Timer < Time.time && GameManager.instance.difficulty > 1)
+        if (Timer < Time.time)
         {
-            shoot(GameManager.IsWhat.Photon_down, aim);
+            shoot(GameManager.IsWhat.Positron, aim);
         }
     }
 
@@ -158,6 +158,16 @@ public class Player : MonoBehaviour
 
     private void shoot(GameManager.IsWhat isWhat, Vector2 dir)
     {
+        if (GameManager.instance.GetPlayingState() == GameManager.PlayingState.Fase1)
+        {
+            return;
+        }
+        else if (GameManager.instance.GetPlayingState() == GameManager.PlayingState.Fase2 &&
+            ((isWhat == GameManager.IsWhat.Electron) || (isWhat == GameManager.IsWhat.Positron)))
+        {
+            return;
+        }
+
         Timer = Time.time + 1 / firerate;
         dir.Normalize();
         Particle.SpawnParticle(GameManager.GetParticleSOFromIsWhat(isWhat), (Vector2)transform.position + 3 * (Vector2)dir / 2, dir, false);

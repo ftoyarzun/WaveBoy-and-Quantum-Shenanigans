@@ -25,7 +25,7 @@ public class Particle : MonoBehaviour
         Rb = GetComponent<Rigidbody2D>();
     }
 
-        void Update()
+    void Update()
     {
         if (isEnemy && (isWhat == GameManager.IsWhat.Electron || isWhat == GameManager.IsWhat.Positron))
         {
@@ -55,6 +55,11 @@ public class Particle : MonoBehaviour
             {
                 isEnemy = true;
             }
+        }
+
+        if (transform.position.magnitude > 30)
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -98,6 +103,15 @@ public class Particle : MonoBehaviour
                     speed *= 2;
                 }
             }
+            else
+            {
+                if ((isWhat == collidedParticle.GetIsWhat()) && (isWhat == GameManager.IsWhat.Photon_up || isWhat == GameManager.IsWhat.Photon_down))
+                {
+                    Destroy(this.gameObject);
+                    Destroy(collision.gameObject);
+                    GameManager.instance.UpdateHighscore();
+                }
+            }
         }
 
 
@@ -131,9 +145,7 @@ public class Particle : MonoBehaviour
 
     public static void SpawnParticle(ParticleSO particleSO, Vector2 position, Vector2 direction, bool isEnemy, float force = 400)
     {
-
-        Particle particle = Instantiate(particleSO.prefab, position, Quaternion.identity);
-        //particle.transform.position = position;
+        Particle particle = Instantiate(particleSO.prefab, position, Quaternion.identity, ParticleManager.instance.transform);
         particle.Starter(isEnemy, 0, particleSO.isWhat);
         particle.GetComponent<Rigidbody2D>().AddForce(direction * force);
     }

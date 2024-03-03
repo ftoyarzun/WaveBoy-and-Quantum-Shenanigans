@@ -7,6 +7,8 @@ using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using static UnityEngine.ParticleSystem;
+using System;
+using Unity.Mathematics;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,25 +33,58 @@ public class GameManager : MonoBehaviour
         Fase1,
         Fase2,
         Fase3,
-        Boss1,
         Fase4,
         Fase5,
+        Boss1,
         Boss2
     }
 
     public static GameManager instance { get; private set; }
-    public float Timer;
-    public TMP_Text Highscore, Combo;
+
+    public event EventHandler OnPlayingStateChanged;
+    
+    
+    private GameState gameState;
+    private PlayingState playingState = PlayingState.Fase3;
+
+
+    private static bool gameIsPaused;
+    private bool faseStarting = true;
+
+
     public int highscore = 0;
     public int combo = 0;
     public int MaxCombo = 0;
-    public GameState gameState;
-    public static bool gameIsPaused;
-    public int difficulty = 0;
-    public bool act;
-    public float Spawnrate = 2;
+
+    private float randomAngle;
+    private int angleSpanForRandomAngle = 20;
+
+    private float timerToSpawnParticles;
+    private float Spawnrate = 2;
+    private float laserAngle;
+
+    private float fase1Timer;
+    private float fase2Timer;
+    private float fase3Timer;
+    private float fase4Timer;
+    private float fase1TimerMax = 2f;
+    private float fase2TimerMax = 3f;
+    private float fase3TimerMax = 10f;
+    private float fase4TimerMax = 10f;
+
+    private float fase3TimerMax_1 = 10;
+    private float fase3TimerMax_2 = 20;
+    private float fase3TimerMax_3 = 30;
+
+    private float fase4TimerMax_1 = 10f;
+    private float fase4TimerMax_2 = 20f;
+    private float fase4TimerMax_3 = 30f;
+
+
 
     [SerializeField] private ParticleSOList particleSOList;
+    [SerializeField] private TMP_Text Highscore;
+    [SerializeField] private TMP_Text Combo;
 
 
     public Vector2 randomSpawnPosition;
@@ -66,21 +101,33 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         ResetCombo();
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Timer < Time.time)
+        switch (playingState)
         {
-            makeClone(-1, -1);
-            makeClone(-1, 1);
-            makeClone(1, -1);
-            makeClone(1, 1);
-
-            Timer = Time.time + 1 / Spawnrate * 2;
+            case GameManager.PlayingState.Fase1:
+                GameManagerFase1();
+                break;
+            case GameManager.PlayingState.Fase2:
+                GameManagerFase2();
+                break;
+            case GameManager.PlayingState.Fase3:
+                GameManagerFase3();
+                break;
+            case GameManager.PlayingState.Fase4:
+                GameManagerFase4();
+                break;
+            case GameManager.PlayingState.Fase5:
+                break;
+            case GameManager.PlayingState.Boss1:
+                break;
+            case GameManager.PlayingState.Boss2:
+                break;
         }
+
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -89,21 +136,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ChangeGameState(GameState newstate)
-    {
-
-    }
-
     public void makeClone(int x, int y)
     {
-        if (Random.Range(0, 10) > 5)
+        if (UnityEngine.Random.Range(0, 10) > 1)
         {
-            randomSpawnPosition = new Vector2(x * Random.Range(8, 12), y * Random.Range(8, 12));
+            randomSpawnPosition = new Vector2(x * UnityEngine.Random.Range(8, 12), y * UnityEngine.Random.Range(8, 12));
             aimAtPlayer = -(randomSpawnPosition - (Vector2) Player.Instance.transform.position);
-            Particle.SpawnParticle(particleSOList.particleSOList[Random.Range(0,2+ difficulty)], randomSpawnPosition, aimAtPlayer, true, 10f);
-            //Wavelet clone = Instantiate(wavelet, new Vector3(x * Random.Range(4, 8), y * Random.Range(4, 8)), Quaternion.identity);
-            //clone.Starter(true, (float)Random.Range(10, 20) / 10, Random.Range(0, 2+difficulty));
+            Particle.SpawnParticle(particleSOList.particleSOList[UnityEngine.Random.Range(0,4)], randomSpawnPosition, aimAtPlayer, true, 10f);
         }
+    }
+
+    private void makeClone(float x, float y, GameManager.IsWhat isWhat, float spawnProbability)
+    {
+        if (UnityEngine.Random.Range(0, 10) > (1f - spawnProbability) *10f)
+        {
+            Vector2 spawnPosition = new Vector2(x,y);
+            aimAtPlayer = -(spawnPosition - (Vector2)Player.Instance.transform.position);
+            randomAngle = UnityEngine.Random.Range(-angleSpanForRandomAngle, angleSpanForRandomAngle);
+            aimAtPlayer = Quaternion.Euler(0f, 0f, randomAngle) * aimAtPlayer;
+            aimAtPlayer.Normalize();
+            Particle.SpawnParticle(GetParticleSOFromIsWhat(isWhat), spawnPosition, aimAtPlayer, true, 10f);
+        }
+    }
+
+    private void makeClone(float x, float y, GameManager.IsWhat isWhat, Vector2 direction)
+    {
+
+        Vector2 spawnPosition = new Vector2(x, y);
+        Particle.SpawnParticle(GetParticleSOFromIsWhat(isWhat), spawnPosition, direction, true, 10f);
+
     }
 
     public void UpdateHighscore()
@@ -160,11 +221,195 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-}
+    public GameState GetGameState()
+    {
+        return gameState;
+    }
 
-public enum GameState
-{
-    GameStart = 0,
-    Pause = 1,
-    DieScreen = 2
+    public PlayingState GetPlayingState()
+    {
+        return playingState;
+    }
+
+    private void GameManagerFase1()
+    {
+        if (faseStarting)
+        {
+            UIAssistant.Instance.SetHasToDispayText();
+            faseStarting = false;
+        }
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            fase1Timer += Time.deltaTime;
+            if (fase1Timer > fase1TimerMax)
+            {
+                playingState = PlayingState.Fase2;
+                faseStarting = true;
+                OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);   
+            }
+        }
+        
+    }
+
+    private void GameManagerFase2()
+    {
+        if (faseStarting)
+        {
+            UIAssistant.Instance.SetHasToDispayText();
+            faseStarting = false;
+        }
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            fase2Timer += Time.deltaTime;
+            if (fase2Timer > fase2TimerMax)
+            {
+                playingState = PlayingState.Fase3;
+                faseStarting = true;
+                OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    private void GameManagerFase3()
+    {
+        if (faseStarting)
+        {
+            UIAssistant.Instance.SetHasToDispayText();
+            faseStarting = false;
+        }
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            fase3Timer += Time.deltaTime;
+            if (timerToSpawnParticles < Time.time)
+            {
+                float randomX = UnityEngine.Random.Range(-14f, 14f);
+                float randomY = UnityEngine.Random.Range(-8f, 8f);
+                if ((fase3Timer > fase3TimerMax_3) && ParticleManager.instance.GetNumberOfParticles() == 0)
+                {
+                    playingState = PlayingState.Fase4;
+                    faseStarting = true;
+                    OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
+                }
+
+                else if ((fase3Timer > fase3TimerMax_3))
+                {
+
+                }
+
+                else if (fase3Timer > fase3TimerMax_2)
+                {
+                    if (UnityEngine.Random.Range(0, 2) == 0)
+                    {
+                        makeClone(randomX, -10, GameManager.IsWhat.Photon_up, 0.9f);
+                        makeClone(randomX, 10, GameManager.IsWhat.Photon_down, 0.9f);
+                    }
+                    else
+                    {
+                        makeClone(randomX, 10, GameManager.IsWhat.Photon_up, 0.9f);
+                        makeClone(randomX, -10, GameManager.IsWhat.Photon_down, 0.9f);
+                    }
+                }
+
+                else if (fase3Timer > fase3TimerMax_1)
+                {
+                    makeClone(randomX, 10, GameManager.IsWhat.Photon_up, 0.9f);
+                    makeClone(randomX, -10, GameManager.IsWhat.Photon_down, 0.9f);
+                }
+
+                else
+                {
+                    makeClone(randomX, -10, GameManager.IsWhat.Photon_up, 0.9f);
+                    makeClone(randomX, 10, GameManager.IsWhat.Photon_down, 0.9f);
+                }
+
+
+                timerToSpawnParticles = Time.time + 1 / Spawnrate * 2;
+            }  
+        }
+        
+    }
+
+    private void GameManagerFase4()
+    {
+        if (faseStarting)
+        {
+            UIAssistant.Instance.SetHasToDispayText();
+            faseStarting = false;
+        }
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            fase4Timer += Time.deltaTime;
+            if ((fase4Timer > fase4TimerMax_3) && ParticleManager.instance.GetNumberOfParticles() == 0)
+            {
+                playingState = PlayingState.Fase5;
+                faseStarting = true;
+                OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            else if ((fase4Timer > fase4TimerMax_3))
+            {
+
+            }
+
+            else if (fase4Timer > fase4TimerMax_2)
+            {
+                if (UnityEngine.Random.Range(0, 2) == 0)
+                {
+                    float angleSpeed = 60;
+                    laserAngle += Time.deltaTime * angleSpeed;
+                    SpawnLaser(true, true, laserAngle);
+                }
+                else
+                {
+                    float angleSpeed = 40;
+                    laserAngle -= Time.deltaTime * angleSpeed;
+                    SpawnLaser(true, true, laserAngle);
+                }
+            }
+
+            else if (fase4Timer > fase4TimerMax_1)
+            {
+                float angleSpeed = 20;
+                laserAngle += Time.deltaTime * angleSpeed;
+                SpawnLaser(true, true, laserAngle);
+            }
+
+            else
+            {
+                SpawnLaser(true, true, 0f);
+            }
+        }
+    }
+
+
+    private void SpawnLaser(bool right, bool up, float angle)
+    {
+        Vector2 startDirection = Vector2.zero;
+        startDirection.x = right? 1 : -1;
+        startDirection.y = up ? 1 : -1;
+
+        startDirection = Quaternion.Euler(0f,0f,angle) * startDirection;
+
+        Vector2 spreadDireciton = new Vector2(-startDirection.y, startDirection.x);
+
+        float laserSpread = 7f;
+        if (timerToSpawnParticles < Time.time)
+        {
+            for (int i = 0; i < laserSpread; i++)
+            {
+                Vector2 spawnPosition = startDirection * 10 + (i - laserSpread/2) * spreadDireciton * 2;
+                Debug.Log(spawnPosition);
+                if (i % 2 == 0)
+                {
+                    makeClone(spawnPosition.x, spawnPosition.y, GameManager.IsWhat.Photon_up, -startDirection);
+                }
+                else
+                {
+                    makeClone(spawnPosition.x, spawnPosition.y, GameManager.IsWhat.Photon_down, -startDirection);
+                }
+                
+            }
+            timerToSpawnParticles = Time.time + 1 / Spawnrate * 2;
+        }
+    }
 }
