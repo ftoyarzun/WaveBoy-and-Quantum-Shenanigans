@@ -9,7 +9,7 @@ public class Particle : MonoBehaviour
     protected Vector2 dir;
     protected Vector2 vel;
     protected Rigidbody2D Rb;
-    protected float speed = 4f;
+    protected float speed = 6f;
     protected bool isEnemy = true;
 
     [SerializeField] protected GameManager.IsWhat isWhat;
@@ -77,7 +77,7 @@ public class Particle : MonoBehaviour
         if (collision.gameObject.TryGetComponent<Particle>(out Particle collidedParticle))
         {
             Debug.Log(collidedParticle);
-            if (isEnemy && !collidedParticle.IsEnemy())
+            if (isEnemy && !collidedParticle.IsEnemy() || !isEnemy && !collidedParticle.IsEnemy())
             {
                 if ((isWhat == GameManager.IsWhat.Electron && collidedParticle.GetIsWhat() == GameManager.IsWhat.Positron)
                     || (isWhat == GameManager.IsWhat.Positron && collidedParticle.GetIsWhat() == GameManager.IsWhat.Electron))
@@ -88,7 +88,7 @@ public class Particle : MonoBehaviour
                     Player.Instance.DamageControl(isWhat, 1, 10);
                     Player.Instance.ResetTimer();
                     GameManager.instance.UpdateHighscore();
-                    //GameManager.instance.SpawnPhotons(transform.position, norm_dir);
+                    GameManager.instance.SpawnPhotons(transform.position, norm_dir);
                 }
                 else if ((isWhat == collidedParticle.GetIsWhat()) && (isWhat == GameManager.IsWhat.Photon_up || isWhat == GameManager.IsWhat.Photon_down))
                 {
@@ -100,10 +100,10 @@ public class Particle : MonoBehaviour
                 }
                 else
                 {
-                    speed *= 2;
+                    //speed *= 2;
                 }
             }
-            else
+            else if (isEnemy && collidedParticle.IsEnemy())
             {
                 if ((isWhat == collidedParticle.GetIsWhat()) && (isWhat == GameManager.IsWhat.Photon_up || isWhat == GameManager.IsWhat.Photon_down))
                 {
@@ -111,6 +111,10 @@ public class Particle : MonoBehaviour
                     Destroy(collision.gameObject);
                     GameManager.instance.UpdateHighscore();
                 }
+            }
+            else
+            {
+
             }
         }
 

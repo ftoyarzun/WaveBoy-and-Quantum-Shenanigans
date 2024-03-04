@@ -11,6 +11,8 @@ public class UIAssistant : MonoBehaviour
 
     public event EventHandler OnFinishedDisplayingText;
 
+    public const string TRIGGER_STRING = "          ";
+
     [SerializeField] private TextMeshProUGUI assistantText;
     [SerializeField] private TextWriter textWriter;
     [SerializeField] private Button assistantBtn;
@@ -43,7 +45,10 @@ public class UIAssistant : MonoBehaviour
         " or with the triggers on a gamepad...",
         "but might be better for it not be hit by one, it can be very fragile...",
         "Photons are interesting particles, they are their own anti-particle...",
-        "collide two of the same and they will annihilate eachother."
+        "collide two of the same and they will annihilate eachother.",
+        TRIGGER_STRING,
+        "But is must be careful, energy must allways be conserved...",
+        "If it emits somekind of radiation, it has to lose energy"
     };
 
     private string[] fase3String = new string[]
@@ -54,11 +59,21 @@ public class UIAssistant : MonoBehaviour
     private string[] fase4String = new string[]
     {
         "Scientist: Hmmm it looks like it is eating the photons...",
-        "All the light I send in gets absorved somehow...",
+        "All the light I send in gets absorbed somehow...",
         "I really wish I could look what is going on in there...",
         "Maybe if we try a Laser it will react differently...",
     };
 
+    private string[] fase5String = new string[]
+    {
+        "Scientis: Still nothing, I am begining to desesperate...",
+        "Maybe I could try with bigger guns: The ELECTRON MICROSCOPE...",
+        "I hope that the ABERRATION can not shoot its own electron or positrons...",
+        "if it could, probably it would be using left Ctrl and the Spacebar",
+        "or with the left/right buttons on a Gamepad...",
+        "But be careful! These might be atracted to it",
+        "and this time the antiparticle is the opposite particle",
+    };
 
 
     private void Awake()
@@ -68,7 +83,31 @@ public class UIAssistant : MonoBehaviour
 
     private void Start()
     {
+        textWriter.OnTriggerString += TextWriter_OnTriggerString;
+    }
 
+    private void TextWriter_OnTriggerString(object sender, EventArgs e)
+    {
+        switch (GameManager.instance.GetPlayingState())
+        {
+            case GameManager.PlayingState.Fase1:
+                break;
+            case GameManager.PlayingState.Fase2:
+                PlayerHitPointManager.instance.Show();
+                break;
+            case GameManager.PlayingState.Fase3:
+                break;
+            case GameManager.PlayingState.Fase4:
+                break;
+            case GameManager.PlayingState.Fase5:
+                break;
+            case GameManager.PlayingState.Fase6:
+                break;
+            case GameManager.PlayingState.Boss1:
+                break;
+            case GameManager.PlayingState.Boss2:
+                break;
+        }
     }
 
     private void Update()
@@ -90,6 +129,9 @@ public class UIAssistant : MonoBehaviour
                     DisplayText(fase4String);
                     break;
                 case GameManager.PlayingState.Fase5:
+                    DisplayText(fase5String);
+                    break;
+                case GameManager.PlayingState.Fase6:
                     break;
                 case GameManager.PlayingState.Boss1:
                     break;
@@ -138,4 +180,6 @@ public class UIAssistant : MonoBehaviour
     {
         return hasToDisplayText;
     }
+
+
 }

@@ -23,18 +23,20 @@ public class Player : MonoBehaviour
 
     private int ElectronHP = 100;
     private int PositronHP = 100;
-    private float moveSpeed = 5f;
     private int maxHP = 100;
-    private bool canShoot = true;
+
+    private float moveSpeed = 8f;
     private float firerate = 2f;
+
+    private float Timer;
+    private float aimingAngle;
+
     private PlayerInput playerInput = null;
     private Rigidbody2D rb = null;
-    private float Timer;
-    private Vector2 aim;
-    private float aimingAngle;
     private GameManager.IsWhat isWhat;
 
     private Vector2 moveDir;
+    private Vector2 aim;
 
     // Start is called before the first frame update
     void Awake()
@@ -158,19 +160,32 @@ public class Player : MonoBehaviour
 
     private void shoot(GameManager.IsWhat isWhat, Vector2 dir)
     {
-        if (GameManager.instance.GetPlayingState() == GameManager.PlayingState.Fase1)
+        switch (GameManager.instance.GetPlayingState())
         {
-            return;
-        }
-        else if (GameManager.instance.GetPlayingState() == GameManager.PlayingState.Fase2 &&
-            ((isWhat == GameManager.IsWhat.Electron) || (isWhat == GameManager.IsWhat.Positron)))
-        {
-            return;
+            case GameManager.PlayingState.Fase1:
+                return;
+            case GameManager.PlayingState.Fase2:
+                if ((isWhat == GameManager.IsWhat.Electron) || (isWhat == GameManager.IsWhat.Positron)) return;
+                break;
+            case GameManager.PlayingState.Fase3:
+                if ((isWhat == GameManager.IsWhat.Electron) || (isWhat == GameManager.IsWhat.Positron)) return;
+                break;
+            case GameManager.PlayingState.Fase4:
+                if ((isWhat == GameManager.IsWhat.Electron) || (isWhat == GameManager.IsWhat.Positron)) return;
+                break;
+            case GameManager.PlayingState.Fase5:
+                break;
+            case GameManager.PlayingState.Fase6:
+                break;
+            case GameManager.PlayingState.Boss1:
+                break;
+            case GameManager.PlayingState.Boss2:
+                break;
         }
 
         Timer = Time.time + 1 / firerate;
         dir.Normalize();
-        Particle.SpawnParticle(GameManager.GetParticleSOFromIsWhat(isWhat), (Vector2)transform.position + 3 * (Vector2)dir / 2, dir, false);
+        Particle.SpawnParticle(GameManager.GetParticleSOFromIsWhat(isWhat), (Vector2)transform.position + 3 * (Vector2)dir / 2, dir, false, 800f);
         switch (isWhat)
         {
             case GameManager.IsWhat.Photon_up:

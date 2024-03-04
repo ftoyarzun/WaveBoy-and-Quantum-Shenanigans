@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,6 +6,9 @@ using UnityEngine;
 
 public class TextWriter : MonoBehaviour
 {
+
+    public event EventHandler OnTriggerString;
+
     [SerializeField] UIAssistant uiAssistant;
     private TextMeshProUGUI uiText;
     private string textToWrite;
@@ -46,6 +50,13 @@ public class TextWriter : MonoBehaviour
     {
         if (uiText != null)
         {
+            if (textToWrite == UIAssistant.TRIGGER_STRING)
+            {
+                OnTriggerString?.Invoke(this, EventArgs.Empty);
+                uiText = null;
+                finishedWritting = true;
+                return;
+            }
             finishedWritting = false;
             timer -= Time.deltaTime;
             while (timer < 0)

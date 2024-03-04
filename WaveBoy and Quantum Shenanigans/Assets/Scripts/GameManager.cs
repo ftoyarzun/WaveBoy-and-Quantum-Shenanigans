@@ -9,9 +9,13 @@ using UnityEngine.EventSystems;
 using static UnityEngine.ParticleSystem;
 using System;
 using Unity.Mathematics;
+using static GameManager;
 
 public class GameManager : MonoBehaviour
 {
+
+    //Functions that use IsWhat with switch 
+    //Player.Shoot
     public enum IsWhat
     {
         Photon_up,
@@ -28,6 +32,12 @@ public class GameManager : MonoBehaviour
         GameOver
     }
 
+    //Functions that use the PlayingState with switch 
+    //GameManager.Update
+    //Player.Shoot
+    //UIAssistant.TextWriter_OnTriggerString
+    //UIAssistant.Update
+    //ScientistVisuals.GameManager_OnPlayingStateChanged
     public enum PlayingState
     {
         Fase1,
@@ -35,6 +45,7 @@ public class GameManager : MonoBehaviour
         Fase3,
         Fase4,
         Fase5,
+        Fase6,
         Boss1,
         Boss2
     }
@@ -45,7 +56,7 @@ public class GameManager : MonoBehaviour
     
     
     private GameState gameState;
-    private PlayingState playingState = PlayingState.Fase3;
+    private PlayingState playingState = PlayingState.Fase1;
 
 
     private static bool gameIsPaused;
@@ -67,10 +78,12 @@ public class GameManager : MonoBehaviour
     private float fase2Timer;
     private float fase3Timer;
     private float fase4Timer;
+    private float fase5Timer;
     private float fase1TimerMax = 2f;
     private float fase2TimerMax = 3f;
     private float fase3TimerMax = 10f;
     private float fase4TimerMax = 10f;
+    private float fase5TimerMax = 20f;
 
     private float fase3TimerMax_1 = 10;
     private float fase3TimerMax_2 = 20;
@@ -121,6 +134,9 @@ public class GameManager : MonoBehaviour
                 GameManagerFase4();
                 break;
             case GameManager.PlayingState.Fase5:
+                GameManagerFase5();
+                break;
+            case GameManager.PlayingState.Fase6:
                 break;
             case GameManager.PlayingState.Boss1:
                 break;
@@ -197,17 +213,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /*public void SpawnPhotons(Vector2 pos, Vector2 vel)
+    public void SpawnPhotons(Vector2 pos, Vector2 vel)
     {
-        Wavelet clone1 = Instantiate(wavelet, pos, Quaternion.identity);
-        clone1.Starter(false, 4.0f, IsWhat.Photon_up);
-        clone1.SetTimerTo(0.25f);
-        clone1.GetComponent<Rigidbody2D>().AddForce(vel * 400);
-        Wavelet clone2 = Instantiate(wavelet, pos, Quaternion.identity);
-        clone2.Starter(false, 4.0f, IsWhat.Photon_down);
-        clone2.SetTimerTo(0.25f);
-        clone2.GetComponent<Rigidbody2D>().AddForce(-vel * 400);
-    }*/
+        vel.Normalize();
+
+        makeClone(pos.x + vel.x, pos.y + vel.y, GameManager.IsWhat.Photon_up, vel);
+        makeClone(pos.x - vel.x, pos.y - vel.y, GameManager.IsWhat.Photon_down, -vel);
+    }
 
     public static ParticleSO GetParticleSOFromIsWhat(GameManager.IsWhat isWhat)
     {
@@ -378,6 +390,43 @@ public class GameManager : MonoBehaviour
             {
                 SpawnLaser(true, true, 0f);
             }
+        }
+    }
+
+    private void GameManagerFase5()
+    {
+        if (faseStarting)
+        {
+            UIAssistant.Instance.SetHasToDispayText();
+            faseStarting = false;
+        }
+
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            fase5Timer += Time.deltaTime;
+            if (timerToSpawnParticles < Time.time)
+            {
+                if ((fase5Timer > fase5TimerMax) && ParticleManager.instance.GetNumberOfParticles() == 0)
+                {
+                    playingState = PlayingState.Fase6;
+                    faseStarting = true;
+                    OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
+                }
+
+                else if (fase5Timer > fase5TimerMax)
+                {
+
+                }
+                else
+                {
+                    float randomX = UnityEngine.Random.Range(-14f, 14f);
+                    makeClone(randomX, 10, GameManager.IsWhat.Electron, 0.9f);
+                }
+
+
+                timerToSpawnParticles = Time.time + 1 / Spawnrate * 2;
+            }
+
         }
     }
 
