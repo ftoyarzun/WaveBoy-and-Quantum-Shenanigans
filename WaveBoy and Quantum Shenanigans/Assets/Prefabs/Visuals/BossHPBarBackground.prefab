@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3637710600829596584}
   - component: {fileID: 5522890621166620675}
   m_Layer: 0
-  m_Name: ElectronHPBarBackground
+  m_Name: BossHPBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

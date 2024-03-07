@@ -56,11 +56,12 @@ public class GameManager : MonoBehaviour
     
     
     private GameState gameState;
-    private PlayingState playingState = PlayingState.Fase5;
+    private PlayingState playingState = PlayingState.Boss1;
 
 
     private static bool gameIsPaused;
     private bool faseStarting = true;
+    private bool bossfaseStarting = true;
 
 
     public int highscore = 0;
@@ -101,11 +102,16 @@ public class GameManager : MonoBehaviour
     private float fase6TimerMax_2 = 20f;
     private float fase6TimerMax_3 = 30f;
 
+    private Boss boss;
+
 
 
     [SerializeField] private ParticleSOList particleSOList;
     [SerializeField] private TMP_Text Highscore;
     [SerializeField] private TMP_Text Combo;
+    [SerializeField] private Boss bossPrefab;
+    [SerializeField] private GameObject bossSpawnPosition;
+    [SerializeField] private Transform bossBasePosition;
 
 
     public Vector2 randomSpawnPosition;
@@ -149,6 +155,7 @@ public class GameManager : MonoBehaviour
                 GameManagerFase6();
                 break;
             case GameManager.PlayingState.Boss1:
+                GameManagerBoss1();
                 break;
             case GameManager.PlayingState.Boss2:
                 break;
@@ -231,6 +238,16 @@ public class GameManager : MonoBehaviour
         makeClone(pos.x - vel.x, pos.y - vel.y, GameManager.IsWhat.Photon_down, -vel);
     }
 
+    public void SpawnPhotons(Vector2 pos, float mag)
+    {
+        float randomAngle = UnityEngine.Random.Range(0, 180);
+        Vector2 direction = Quaternion.Euler(0,0,randomAngle) * new Vector2(mag, 0);
+
+        makeClone(pos.x + direction.x, pos.y + direction.y, GameManager.IsWhat.Photon_up, direction);
+        makeClone(pos.x - direction.x, pos.y - direction.y, GameManager.IsWhat.Photon_down, -direction);
+    }
+
+
     public static ParticleSO GetParticleSOFromIsWhat(GameManager.IsWhat isWhat)
     {
         foreach (ParticleSO particleSO in Instance.particleSOList.particleSOList)
@@ -278,6 +295,7 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
@@ -298,6 +316,7 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
@@ -358,6 +377,7 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
@@ -411,6 +431,7 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
@@ -449,6 +470,7 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
@@ -503,6 +525,34 @@ public class GameManager : MonoBehaviour
             }
         }
 
+    }
+
+    private void GameManagerBoss1()
+    {
+        if (faseStarting)
+        {
+            PlayerHitPointManager.Instance.Show();
+            UIAssistant.Instance.SetHasToDispayText();
+            Player.Instance.ResetPlayerHitPoints();
+            faseStarting = false;
+        }
+        else if (bossfaseStarting && !UIAssistant.Instance.GetHasToDispayText())
+        {
+            bossfaseStarting = false;
+            boss = Instantiate(bossPrefab, bossSpawnPosition.transform.position, Quaternion.identity);
+            boss.SetBasePosition(bossBasePosition);
+            BossHPUI.Instance.Show();
+            BossHPUI.Instance.SetBoss(boss);
+        }
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            if (boss.GetCurrentHPNormalized() <= 0f)
+            {
+                playingState = PlayingState.Boss2;
+                faseStarting = true;
+                OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
 

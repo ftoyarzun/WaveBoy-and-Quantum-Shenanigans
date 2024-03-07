@@ -31,12 +31,17 @@ public class Player : MonoBehaviour
     private float Timer;
     private float aimingAngle;
 
+    private float pushTimer;
+    private float pushTimerMax = 0.5f;
+
     private PlayerInput playerInput = null;
     private Rigidbody2D rb = null;
     private GameManager.IsWhat isWhat;
 
     private Vector2 moveDir;
     private Vector2 aim;
+
+    private bool gotPushed = false;
 
     // Start is called before the first frame update
     void Awake()
@@ -54,7 +59,25 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        rb.velocity = moveDir;
+        if (!gotPushed)
+        {
+            rb.velocity = moveDir;
+        }
+        else
+        {
+            pushTimer += Time.deltaTime;
+        }
+
+        if (pushTimer > pushTimerMax)
+        {
+            pushTimer = 0;
+            gotPushed = false;
+        }
+
+        if (transform.position.magnitude > 16.31)
+        {
+            transform.position = Vector3.zero;
+        }
     }
 
 
@@ -228,4 +251,9 @@ public class Player : MonoBehaviour
         OnChangeInHP?.Invoke(this, EventArgs.Empty);
     }
 
+    public void GetPushed()
+    {
+        gotPushed = true;
+        pushTimer = 0;
+    }
 }

@@ -83,6 +83,15 @@ public class UIAssistant : MonoBehaviour
         "Do I have to send both electrons and positrons maybe?"
     };
 
+    private string[] Boss1String = new string[]
+    {
+        "Scientist: Hmmm that did not work, every particle I send in gets eaten",
+        "it is like this thing does not want to be seen",
+        "I think I have to use the last resort: Take the magnets out such that the beams go to the middle again",
+        "This way perhaps one silver atom is going to deal with this aberration",
+        "It has a lot more mass than an electron, therefore it should last longer in there"
+    };
+
 
     private void Awake()
     {
@@ -144,6 +153,7 @@ public class UIAssistant : MonoBehaviour
                     DisplayText(fase6String);
                     break;
                 case GameManager.PlayingState.Boss1:
+                    DisplayText(Boss1String);
                     break;
                 case GameManager.PlayingState.Boss2:
                     break;
