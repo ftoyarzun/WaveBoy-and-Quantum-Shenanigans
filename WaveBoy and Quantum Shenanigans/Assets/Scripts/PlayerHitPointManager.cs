@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerHitPointManager : MonoBehaviour
 {
-    public static PlayerHitPointManager instance;
+    public static PlayerHitPointManager Instance;
 
     [SerializeField] Image ElectronHitPointsSlider;
     [SerializeField] Image PositronHitPointsSlider;
@@ -13,7 +13,7 @@ public class PlayerHitPointManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
+        Instance = this;
     }
     private void Start()
     {

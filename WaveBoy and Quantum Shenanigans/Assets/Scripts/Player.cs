@@ -160,7 +160,7 @@ public class Player : MonoBehaviour
 
     private void shoot(GameManager.IsWhat isWhat, Vector2 dir)
     {
-        switch (GameManager.instance.GetPlayingState())
+        switch (GameManager.Instance.GetPlayingState())
         {
             case GameManager.PlayingState.Fase1:
                 return;
@@ -219,6 +219,13 @@ public class Player : MonoBehaviour
     public float GetAimingAngle()
     {
         return aimingAngle;
+    }
+
+    public void ResetPlayerHitPoints()
+    {
+        ElectronHP = maxHP;
+        PositronHP = maxHP;
+        OnChangeInHP?.Invoke(this, EventArgs.Empty);
     }
 
 }

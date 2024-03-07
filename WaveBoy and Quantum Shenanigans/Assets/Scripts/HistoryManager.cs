@@ -70,12 +70,15 @@ public class HistoryManager : MonoBehaviour
             }
         }
 
-        if (timerToStartWriting > 30f && showVideo)
+        if (timerToStartWriting > 35f && showVideo)
         {
+            //stringShowingIndex = textList.Count;
             showVideo = false;
             HideText();
             experimentVideoManager.Show();
-            experimentVideoManager.PlayVideo();
+            UIScientist.Instance.Show();
+            //experimentVideoManager.PlayVideo();
+            UIScientist.Instance.SetHasToDispayText();
         }
     }
 

@@ -87,8 +87,8 @@ public class Particle : MonoBehaviour
                     Destroy(collision.gameObject);
                     Player.Instance.DamageControl(isWhat, 1, 10);
                     Player.Instance.ResetTimer();
-                    GameManager.instance.UpdateHighscore();
-                    GameManager.instance.SpawnPhotons(transform.position, norm_dir);
+                    GameManager.Instance.UpdateHighscore();
+                    GameManager.Instance.SpawnPhotons(transform.position, norm_dir);
                 }
                 else if ((isWhat == collidedParticle.GetIsWhat()) && (isWhat == GameManager.IsWhat.Photon_up || isWhat == GameManager.IsWhat.Photon_down))
                 {
@@ -96,7 +96,7 @@ public class Particle : MonoBehaviour
                     Destroy(collision.gameObject);
                     Player.Instance.DamageControl(isWhat, 1, 10);
                     Player.Instance.ResetTimer();
-                    GameManager.instance.UpdateHighscore();
+                    GameManager.Instance.UpdateHighscore();
                 }
                 else
                 {
@@ -109,7 +109,7 @@ public class Particle : MonoBehaviour
                 {
                     Destroy(this.gameObject);
                     Destroy(collision.gameObject);
-                    GameManager.instance.UpdateHighscore();
+                    GameManager.Instance.UpdateHighscore();
                 }
             }
             else
@@ -123,7 +123,7 @@ public class Particle : MonoBehaviour
         {
             Destroy(this.gameObject);
             collidedPlayer.DamageControl(isWhat, -1, 10);
-            GameManager.instance.ResetCombo();
+            GameManager.Instance.ResetCombo();
         }
     }
 

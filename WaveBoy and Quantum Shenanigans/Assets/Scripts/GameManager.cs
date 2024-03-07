@@ -50,13 +50,13 @@ public class GameManager : MonoBehaviour
         Boss2
     }
 
-    public static GameManager instance { get; private set; }
+    public static GameManager Instance { get; private set; }
 
     public event EventHandler OnPlayingStateChanged;
     
     
     private GameState gameState;
-    private PlayingState playingState = PlayingState.Fase1;
+    private PlayingState playingState = PlayingState.Fase5;
 
 
     private static bool gameIsPaused;
@@ -79,11 +79,15 @@ public class GameManager : MonoBehaviour
     private float fase3Timer;
     private float fase4Timer;
     private float fase5Timer;
+    private float fase6Timer;
+    private float boss1Timer;
+
     private float fase1TimerMax = 2f;
     private float fase2TimerMax = 3f;
     private float fase3TimerMax = 10f;
     private float fase4TimerMax = 10f;
     private float fase5TimerMax = 20f;
+    private float fase6TimerMax = 20f;
 
     private float fase3TimerMax_1 = 10;
     private float fase3TimerMax_2 = 20;
@@ -92,6 +96,10 @@ public class GameManager : MonoBehaviour
     private float fase4TimerMax_1 = 10f;
     private float fase4TimerMax_2 = 20f;
     private float fase4TimerMax_3 = 30f;
+
+    private float fase6TimerMax_1 = 10f;
+    private float fase6TimerMax_2 = 20f;
+    private float fase6TimerMax_3 = 30f;
 
 
 
@@ -102,13 +110,14 @@ public class GameManager : MonoBehaviour
 
     public Vector2 randomSpawnPosition;
     public Vector2 aimAtPlayer;
+    
 
 
     // Start is called before the first frame update
 
     void Awake()
     {
-        instance = this;
+        Instance = this;
     }
 
     void Start()
@@ -137,6 +146,7 @@ public class GameManager : MonoBehaviour
                 GameManagerFase5();
                 break;
             case GameManager.PlayingState.Fase6:
+                GameManagerFase6();
                 break;
             case GameManager.PlayingState.Boss1:
                 break;
@@ -223,7 +233,7 @@ public class GameManager : MonoBehaviour
 
     public static ParticleSO GetParticleSOFromIsWhat(GameManager.IsWhat isWhat)
     {
-        foreach (ParticleSO particleSO in instance.particleSOList.particleSOList)
+        foreach (ParticleSO particleSO in Instance.particleSOList.particleSOList)
         {
             if (isWhat == particleSO.isWhat)
             {
@@ -248,6 +258,7 @@ public class GameManager : MonoBehaviour
         if (faseStarting)
         {
             UIAssistant.Instance.SetHasToDispayText();
+            Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
@@ -268,6 +279,7 @@ public class GameManager : MonoBehaviour
         if (faseStarting)
         {
             UIAssistant.Instance.SetHasToDispayText();
+            Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
@@ -287,6 +299,7 @@ public class GameManager : MonoBehaviour
         if (faseStarting)
         {
             UIAssistant.Instance.SetHasToDispayText();
+            Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
@@ -346,6 +359,7 @@ public class GameManager : MonoBehaviour
         if (faseStarting)
         {
             UIAssistant.Instance.SetHasToDispayText();
+            Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
@@ -398,6 +412,7 @@ public class GameManager : MonoBehaviour
         if (faseStarting)
         {
             UIAssistant.Instance.SetHasToDispayText();
+            Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
         }
 
@@ -420,7 +435,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     float randomX = UnityEngine.Random.Range(-14f, 14f);
-                    makeClone(randomX, 10, GameManager.IsWhat.Electron, 0.9f);
+                    makeClone(randomX, 10, GameManager.IsWhat.Electron, 0.6f);
                 }
 
 
@@ -428,6 +443,66 @@ public class GameManager : MonoBehaviour
             }
 
         }
+    }
+
+    private void GameManagerFase6()
+    {
+        if (faseStarting)
+        {
+            UIAssistant.Instance.SetHasToDispayText();
+            Player.Instance.ResetPlayerHitPoints();
+            faseStarting = false;
+        }
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            fase6Timer += Time.deltaTime;
+            if (timerToSpawnParticles < Time.time)
+            {
+                float randomX = UnityEngine.Random.Range(-14f, 14f);
+                float randomY = UnityEngine.Random.Range(-8f, 8f);
+                if ((fase6Timer > fase6TimerMax_3) && ParticleManager.instance.GetNumberOfParticles() == 0)
+                {
+                    playingState = PlayingState.Boss1;
+                    faseStarting = true;
+                    OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
+                }
+
+                else if ((fase6Timer > fase6TimerMax_3))
+                {
+
+                }
+
+                else if (fase6Timer > fase6TimerMax_2)
+                {
+                    if (UnityEngine.Random.Range(0, 2) == 0)
+                    {
+                        makeClone(randomX, -10, GameManager.IsWhat.Electron, 0.3f);
+                        makeClone(randomX, 10, GameManager.IsWhat.Positron, 0.3f);
+                    }
+                    else
+                    {
+                        makeClone(randomX, 10, GameManager.IsWhat.Electron, 0.3f);
+                        makeClone(randomX, -10, GameManager.IsWhat.Positron, 0.3f);
+                    }
+                }
+
+                else if (fase6Timer > fase6TimerMax_1)
+                {
+                    makeClone(randomX, 10, GameManager.IsWhat.Electron, 0.3f);
+                    makeClone(randomX, -10, GameManager.IsWhat.Positron, 0.3f);
+                }
+
+                else
+                {
+                    makeClone(randomX, -10, GameManager.IsWhat.Electron, 0.3f);
+                    makeClone(randomX, 10, GameManager.IsWhat.Positron, 0.3f);
+                }
+
+
+                timerToSpawnParticles = Time.time + 1 / Spawnrate * 2;
+            }
+        }
+
     }
 
 

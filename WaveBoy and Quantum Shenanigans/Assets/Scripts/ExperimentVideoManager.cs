@@ -8,10 +8,29 @@ public class ExperimentVideoManager : MonoBehaviour
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private GameObject screenRender;
 
+    private float generalTimer = 0;
+    private float pauseTimer = 0;
+    private float pauseTimerMax = Mathf.Infinity;
+    private bool videoPaused = false;
+
 
     private void Start()
     {
         videoPlayer.loopPointReached += VideoPlayer_loopPointReached;
+    }
+
+    private void Update()
+    {
+        if (videoPaused)
+        {
+            pauseTimer += Time.deltaTime;
+            if (pauseTimer > pauseTimerMax)
+            {
+                pauseTimer = 0;
+                videoPaused = false;
+                PlayVideo();
+            }
+        }
     }
 
     private void VideoPlayer_loopPointReached(VideoPlayer source)
@@ -22,6 +41,13 @@ public class ExperimentVideoManager : MonoBehaviour
     public void PlayVideo()
     {
         videoPlayer.Play();
+    }
+
+    public void PauseVideo(float pauseTime)
+    {
+        videoPaused = true;
+        videoPlayer.Pause();
+        pauseTimerMax = pauseTime;
     }
 
     public void Show()

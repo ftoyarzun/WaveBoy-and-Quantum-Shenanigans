@@ -15,7 +15,6 @@ public class UIAssistant : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI assistantText;
     [SerializeField] private TextWriter textWriter;
-    [SerializeField] private Button assistantBtn;
     [SerializeField] private GameObject scientistVisuals;
 
     private int stringShowingIndex = 0;
@@ -33,6 +32,7 @@ public class UIAssistant : MonoBehaviour
     {
         "Scientist: IT IS NOT POSSIBLE! This should not have happened...",
         "Every particle should have gone to the upper or lower stream...",
+        "I can't see what is is, it must be a million times smaller than the thickness of a human hair",
         "What is happening!! It looks like it is moving using WASD or a gamepad left stick...",
         "This is impossible, it is an abnormality...",
         "it is...",
@@ -45,9 +45,9 @@ public class UIAssistant : MonoBehaviour
         " or with the triggers on a gamepad...",
         "but might be better for it not be hit by one, it can be very fragile...",
         "Photons are interesting particles, they are their own anti-particle...",
-        "collide two of the same and they will annihilate eachother.",
+        "collide two of the same and they will annihilate eachother...",
         TRIGGER_STRING,
-        "But is must be careful, energy must allways be conserved...",
+        "But it must be careful, energy must allways be conserved...",
         "If it emits somekind of radiation, it has to lose energy"
     };
 
@@ -61,18 +61,26 @@ public class UIAssistant : MonoBehaviour
         "Scientist: Hmmm it looks like it is eating the photons...",
         "All the light I send in gets absorbed somehow...",
         "I really wish I could look what is going on in there...",
-        "Maybe if we try a Laser it will react differently...",
+        "Maybe if we try a Laser it will react differently",
     };
 
     private string[] fase5String = new string[]
     {
         "Scientis: Still nothing, I am begining to desesperate...",
         "Maybe I could try with bigger guns: The ELECTRON MICROSCOPE...",
-        "I hope that the ABERRATION can not shoot its own electron or positrons...",
-        "if it could, probably it would be using left Ctrl and the Spacebar",
+        "But be careful! These might be atracted to it...",
+        "and this time the antiparticle is the opposite particle...",
+        "I hope that the ABERRATION can shoot its own electron or positrons...",
+        "if it could, probably it would be using left Ctrl and the Spacebar...",
         "or with the left/right buttons on a Gamepad...",
-        "But be careful! These might be atracted to it",
-        "and this time the antiparticle is the opposite particle",
+        "if it gets hit, maybe it could gain some energy by annihilating some photons...",
+        "these photons get created as the energy of the annihilated particles must be conserved"
+    };
+
+    private string[] fase6String = new string[]
+    {
+        "Scientist: I can't understand what is happening...",
+        "Do I have to send both electrons and positrons maybe?"
     };
 
 
@@ -88,12 +96,13 @@ public class UIAssistant : MonoBehaviour
 
     private void TextWriter_OnTriggerString(object sender, EventArgs e)
     {
-        switch (GameManager.instance.GetPlayingState())
+        switch (GameManager.Instance.GetPlayingState())
         {
             case GameManager.PlayingState.Fase1:
                 break;
             case GameManager.PlayingState.Fase2:
-                PlayerHitPointManager.instance.Show();
+                PlayerHitPointManager.Instance.Show();
+                Player.Instance.ResetPlayerHitPoints();
                 break;
             case GameManager.PlayingState.Fase3:
                 break;
@@ -114,7 +123,7 @@ public class UIAssistant : MonoBehaviour
     {
         if (hasToDisplayText)
         {
-            switch (GameManager.instance.GetPlayingState())
+            switch (GameManager.Instance.GetPlayingState())
             {
                 case GameManager.PlayingState.Fase1:
                     DisplayText(introductionMessages);
@@ -132,6 +141,7 @@ public class UIAssistant : MonoBehaviour
                     DisplayText(fase5String);
                     break;
                 case GameManager.PlayingState.Fase6:
+                    DisplayText(fase6String);
                     break;
                 case GameManager.PlayingState.Boss1:
                     break;

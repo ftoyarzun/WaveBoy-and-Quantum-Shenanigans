@@ -14,12 +14,12 @@ public class ScientistVisuals : MonoBehaviour
 
     private void Start()
     {
-        GameManager.instance.OnPlayingStateChanged += GameManager_OnPlayingStateChanged;
+        GameManager.Instance.OnPlayingStateChanged += GameManager_OnPlayingStateChanged;
     }
 
     private void GameManager_OnPlayingStateChanged(object sender, System.EventArgs e)
     {
-        switch (GameManager.instance.GetPlayingState())
+        switch (GameManager.Instance.GetPlayingState())
         {
             case GameManager.PlayingState.Fase1:
                 scientistImage.sprite = surprisedScientist;
@@ -37,6 +37,7 @@ public class ScientistVisuals : MonoBehaviour
                 scientistImage.sprite = regretScientist;
                 break;
             case GameManager.PlayingState.Fase6:
+                scientistImage.sprite = wonderingScientist;
                 break;
             case GameManager.PlayingState.Boss1:
                 break;
