@@ -102,7 +102,6 @@ public class Boss : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent<Particle>(out Particle collidedParticle))
         {
-            Debug.Log(collidedParticle);
             if (isEnemy && !collidedParticle.IsEnemy() || !isEnemy && !collidedParticle.IsEnemy())
             {
                 if ((isWhat == GameManager.IsWhat.Electron && collidedParticle.GetIsWhat() == GameManager.IsWhat.Positron)

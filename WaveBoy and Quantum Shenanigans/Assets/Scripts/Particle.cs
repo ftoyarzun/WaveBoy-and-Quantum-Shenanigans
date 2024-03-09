@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,12 @@ using static UnityEngine.ParticleSystem;
 
 public class Particle : MonoBehaviour
 {
+
+    public static event EventHandler<OnParticleCollisionEventAgrs> OnParticleCollision;
+    public class OnParticleCollisionEventAgrs: EventArgs
+    {
+        public GameManager.IsWhat isWhat;
+    }
 
     protected Vector2 dir;
     protected Vector2 vel;
@@ -76,7 +83,6 @@ public class Particle : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent<Particle>(out Particle collidedParticle))
         {
-            Debug.Log(collidedParticle);
             if (isEnemy && !collidedParticle.IsEnemy() || !isEnemy && !collidedParticle.IsEnemy())
             {
                 if ((isWhat == GameManager.IsWhat.Electron && collidedParticle.GetIsWhat() == GameManager.IsWhat.Positron)
@@ -89,6 +95,7 @@ public class Particle : MonoBehaviour
                     Player.Instance.ResetTimer();
                     GameManager.Instance.UpdateHighscore();
                     GameManager.Instance.SpawnPhotons(transform.position, norm_dir);
+                    OnParticleCollision?.Invoke(this, new OnParticleCollisionEventAgrs {isWhat = isWhat});
                 }
                 else if ((isWhat == collidedParticle.GetIsWhat()) && (isWhat == GameManager.IsWhat.Photon_up || isWhat == GameManager.IsWhat.Photon_down))
                 {
@@ -97,6 +104,7 @@ public class Particle : MonoBehaviour
                     Player.Instance.DamageControl(isWhat, 1, 10);
                     Player.Instance.ResetTimer();
                     GameManager.Instance.UpdateHighscore();
+                    OnParticleCollision?.Invoke(this, new OnParticleCollisionEventAgrs { isWhat = isWhat });
                 }
                 else
                 {
@@ -110,6 +118,7 @@ public class Particle : MonoBehaviour
                     Destroy(this.gameObject);
                     Destroy(collision.gameObject);
                     GameManager.Instance.UpdateHighscore();
+                    OnParticleCollision?.Invoke(this, new OnParticleCollisionEventAgrs { isWhat = isWhat });
                 }
             }
             else

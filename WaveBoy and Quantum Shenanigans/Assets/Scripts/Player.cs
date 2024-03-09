@@ -19,6 +19,11 @@ public class Player : MonoBehaviour
     }
 
     public event EventHandler OnChangeInHP;
+    public event EventHandler<OnShootEventArgs> OnShoot;
+    public class OnShootEventArgs : EventArgs
+    {
+        public GameManager.IsWhat isWhat;
+    }
 
 
     private int ElectronHP = 100;
@@ -226,6 +231,8 @@ public class Player : MonoBehaviour
             case GameManager.IsWhat.Player:
                 break;
         }
+
+        OnShoot?.Invoke(this, new OnShootEventArgs { isWhat = isWhat });
     }
 
     public float GetHitPointValueNormalized(HitPointType hitPointType)

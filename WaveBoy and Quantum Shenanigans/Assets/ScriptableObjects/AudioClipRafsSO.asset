@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8883716b25d5f4d4293e39f3b151c699, type: 3}
+  m_Name: AudioClipRafsSO
+  m_EditorClassIdentifier: 
+  dropplet: []
+  fire:
+  - {fileID: 8300000, guid: 469487210d76d7a46b4f82a5bc030eb3, type: 3}
+  - {fileID: 8300000, guid: 3ceca889d1fae9e4188a3293858374d1, type: 3}
+  - {fileID: 8300000, guid: c3ee010ae0307dd46b2cae9c9e02e308, type: 3}
+  - {fileID: 8300000, guid: b2fdfbf6704e46f46baa733515fecd86, type: 3}
+  collide:
+  - {fileID: 8300000, guid: 2c73272b087e00447812a9d72eccf1e5, type: 3}
+  - {fileID: 8300000, guid: 617114464cb00bf4c9791a8058362a96, type: 3}
+  stoveSizzle: {fileID: 0}

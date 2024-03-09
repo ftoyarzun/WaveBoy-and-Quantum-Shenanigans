@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 158830a31801ce64cabb5ea74de472a5, type: 3}
+  m_Name: MusicRafsSO
+  m_EditorClassIdentifier: 
+  music:
+  - {fileID: 8300000, guid: e89595171e1b21e449bab9ab58d2d055, type: 3}
+  - {fileID: 8300000, guid: 62a9b369bc15b9f46b4ddab5b1092ff1, type: 3}
+  - {fileID: 8300000, guid: 54cf358b673716648b277e4521e04092, type: 3}
+  - {fileID: 8300000, guid: e89595171e1b21e449bab9ab58d2d055, type: 3}
+  - {fileID: 8300000, guid: 54cf358b673716648b277e4521e04092, type: 3}
+  - {fileID: 8300000, guid: 62a9b369bc15b9f46b4ddab5b1092ff1, type: 3}
+  boss:
+  - {fileID: 8300000, guid: 3cfb8e6fbfa6b7940aa6a50cc5abf68e, type: 3}

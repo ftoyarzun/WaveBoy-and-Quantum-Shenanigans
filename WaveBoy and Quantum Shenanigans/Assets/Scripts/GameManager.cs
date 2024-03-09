@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
     
     
     private GameState gameState;
-    private PlayingState playingState = PlayingState.Boss1;
+    private PlayingState playingState = PlayingState.Fase1;
 
 
     private static bool gameIsPaused;
@@ -572,7 +572,6 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < laserSpread; i++)
             {
                 Vector2 spawnPosition = startDirection * 10 + (i - laserSpread/2) * spreadDireciton * 2;
-                Debug.Log(spawnPosition);
                 if (i % 2 == 0)
                 {
                     makeClone(spawnPosition.x, spawnPosition.y, GameManager.IsWhat.Photon_up, -startDirection);

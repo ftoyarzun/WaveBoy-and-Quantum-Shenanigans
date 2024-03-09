@@ -5,16 +5,24 @@ using UnityEngine;
 public class BossVisuals : MonoBehaviour
 {
     [SerializeField] Boss boss;
-    [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] SpriteRenderer electronSR;
-    [SerializeField] SpriteRenderer positronSR;
-    [SerializeField] SpriteRenderer photonUPSR;
-    [SerializeField] SpriteRenderer photonDownSR;
+    [SerializeField] Material material;
+
+
+    private Vector3 electronColor = new Vector3(4f,1f,1f);
+    private Vector3 positronColor = new Vector3(1f,2f,5f);
+    private Vector3 photonUpColor = new Vector3(1f, 5f, 1f);
+    private Vector3 photonDownColor = new Vector3(2f, 0.5f, 4f);
+
+    private Vector3 currentColor;
+    private Vector3 targetColor;
+
+    private float currentBlend;
+    private float targetBlend;
+    private float smooth = 5f;
 
     private void Start()
     {
         boss.OnBehaviorChanged += Boss_OnBehaviorChanged;
-        spriteRenderer.color = electronSR.color;
     }
 
     private void Boss_OnBehaviorChanged(object sender, System.EventArgs e)
@@ -22,19 +30,31 @@ public class BossVisuals : MonoBehaviour
         switch (boss.GetIsWhat())
         {
             case GameManager.IsWhat.Photon_up:
-                spriteRenderer.color = photonUPSR.color;
+                targetColor = photonUpColor;
+                targetBlend = 1f;
                 break;
             case GameManager.IsWhat.Photon_down:
-                spriteRenderer.color = photonDownSR.color;
+                targetColor = photonDownColor;
+                targetBlend = 1f;
                 break;
             case GameManager.IsWhat.Electron:
-                spriteRenderer.color = electronSR.color;
+                targetColor = electronColor;
+                targetBlend = 0f;
                 break;
             case GameManager.IsWhat.Positron:
-                spriteRenderer.color = positronSR.color;
+                targetColor = positronColor;
+                targetBlend = 0f;
                 break;
             case GameManager.IsWhat.Player:
                 break;
         }
+    }
+
+    private void Update()
+    {
+        currentColor = Vector3.Lerp(currentColor, targetColor, Time.deltaTime*smooth);
+        currentBlend = Mathf.Lerp(currentBlend, targetBlend, Time.deltaTime * smooth);
+        material.SetFloat("_blendFactor", currentBlend);
+        material.SetVector("_colorVector", currentColor);
     }
 }
