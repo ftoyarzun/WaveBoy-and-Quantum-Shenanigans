@@ -5,13 +5,13 @@ using UnityEngine;
 public class SoundEffectsManager : MonoBehaviour
 {
     private const string PLAYER_PREFS_SOUND_EFFETS_VOLUME = "SoundEffectsVolume";
-    public static SoundEffectsManager instance { get; private set; }
+    public static SoundEffectsManager Instance { get; private set; }
     [SerializeField] private AudioClipRafsSO audioClipRafsSO;
     private float volume = 5f;
 
     private void Awake()
     {
-        instance = this;
+        Instance = this;
         volume = PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFETS_VOLUME, 1f);
     }
 
@@ -71,5 +71,18 @@ public class SoundEffectsManager : MonoBehaviour
     private void PlaySound(AudioClip audioClip, Vector3 position, float volumeMultiplier = 1f)
     {
         AudioSource.PlayClipAtPoint(audioClip, position, volumeMultiplier * volume);
+    }
+
+    public void ChangeVolume()
+    {
+        volume += 0.1f;
+        volume = (volume > 1f) ? 0f : volume;
+        PlayerPrefs.SetFloat(PLAYER_PREFS_SOUND_EFFETS_VOLUME, volume);
+        PlayerPrefs.Save();
+    }
+
+    public float GetVolume()
+    {
+        return volume;
     }
 }

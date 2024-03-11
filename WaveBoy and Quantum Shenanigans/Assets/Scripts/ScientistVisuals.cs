@@ -12,9 +12,19 @@ public class ScientistVisuals : MonoBehaviour
     [SerializeField] Sprite ideaScientist;
     [SerializeField] Sprite regretScientist;
 
+    private bool shrinkScientist = false;
+
     private void Start()
     {
         GameManager.Instance.OnPlayingStateChanged += GameManager_OnPlayingStateChanged;
+    }
+
+    private void Update()
+    {
+        if (shrinkScientist)
+        {
+            scientistImage.transform.localScale *= 0.99f;
+        }
     }
 
     private void GameManager_OnPlayingStateChanged(object sender, System.EventArgs e)
@@ -43,6 +53,14 @@ public class ScientistVisuals : MonoBehaviour
                 break;
             case GameManager.PlayingState.Boss2:
                 break;
+            case GameManager.PlayingState.Died:
+                scientistImage.sprite = regretScientist;
+                break;
         }
+    }
+
+    public void ShrinkScientist()
+    {
+        shrinkScientist = true;
     }
 }

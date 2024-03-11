@@ -35,7 +35,7 @@ public class ExperimentVideoManager : MonoBehaviour
 
     private void VideoPlayer_loopPointReached(VideoPlayer source)
     {
-        Loader.LoaderCallback();
+        Loader.Load(Loader.Scene.GameScene);
     }
 
     public void PlayVideo()

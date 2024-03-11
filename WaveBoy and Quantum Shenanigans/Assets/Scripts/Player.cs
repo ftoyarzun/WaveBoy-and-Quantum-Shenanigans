@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
         PositronHP
     }
 
+    public event EventHandler OnPlayerDied;
     public event EventHandler OnChangeInHP;
     public event EventHandler<OnShootEventArgs> OnShoot;
     public class OnShootEventArgs : EventArgs
@@ -82,6 +83,12 @@ public class Player : MonoBehaviour
         if (transform.position.magnitude > 16.31)
         {
             transform.position = Vector3.zero;
+        }
+
+        if (ElectronHP <= 0f || PositronHP <= 0)
+        {
+            OnPlayerDied?.Invoke(this, EventArgs.Empty);
+            Hide();
         }
     }
 
@@ -184,10 +191,30 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnPause(InputValue value)
+    {
+        GameManager.Instance.TogglePauseGame();
+    }
+
 
 
     private void shoot(GameManager.IsWhat isWhat, Vector2 dir)
     {
+        if (Time.timeScale < 0.1f)
+        {
+            return;
+        }
+
+        if (GameManager.Instance.GetPlayingState() == GameManager.PlayingState.Died)
+        {
+            return;
+        }
+
+        if (GameManager.Instance.GetPlayingState() == GameManager.PlayingState.Boss2)
+        {
+            return;
+        }
+
         switch (GameManager.Instance.GetPlayingState())
         {
             case GameManager.PlayingState.Fase1:
@@ -208,6 +235,8 @@ public class Player : MonoBehaviour
             case GameManager.PlayingState.Boss1:
                 break;
             case GameManager.PlayingState.Boss2:
+                break;
+            case GameManager.PlayingState.Died:
                 break;
         }
 
@@ -262,5 +291,15 @@ public class Player : MonoBehaviour
     {
         gotPushed = true;
         pushTimer = 0;
+    }
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
     }
 }

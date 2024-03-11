@@ -16,7 +16,7 @@ public class MusicManager : MonoBehaviour
     {
         instance = this;
         audioSource = GetComponent<AudioSource>();
-        volume = PlayerPrefs.GetFloat(PLAYER_PREFS_MUSIC_VOLUME, 0.1f);
+        volume = PlayerPrefs.GetFloat(PLAYER_PREFS_MUSIC_VOLUME, 0.5f);
         audioSource.volume = volume;
     }
 
@@ -33,8 +33,6 @@ public class MusicManager : MonoBehaviour
                 audioSource.clip = musicRafsSO.music[0];
                 break;
             case GameManager.PlayingState.Fase2:
-                audioSource.clip = musicRafsSO.music[0];
-                audioSource.Play();
                 break;
             case GameManager.PlayingState.Fase3:
                 audioSource.clip = musicRafsSO.music[2];
@@ -57,6 +55,8 @@ public class MusicManager : MonoBehaviour
                 audioSource.Play();
                 break;
             case GameManager.PlayingState.Boss2:
+                break;
+            case GameManager.PlayingState.Died:
                 break;
         }
     }

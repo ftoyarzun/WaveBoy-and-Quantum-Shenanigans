@@ -23,6 +23,7 @@ public class BossHPUI : MonoBehaviour
     public void Show()
     {
         gameObject.SetActive(true);
+        BossHitPointsSlider.fillAmount = boss.GetCurrentHPNormalized();
     }
 
     public void Hide()
@@ -39,5 +40,9 @@ public class BossHPUI : MonoBehaviour
     private void Boss_OnHitPointChanged(object sender, System.EventArgs e)
     {
         BossHitPointsSlider.fillAmount = boss.GetCurrentHPNormalized();
+        if (boss.GetCurrentHPNormalized() <= 0f)
+        {
+            Hide();
+        }
     }
 }

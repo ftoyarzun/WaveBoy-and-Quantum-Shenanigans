@@ -42,7 +42,7 @@ public class Boss : MonoBehaviour
     private Vector2 shootDirection;
     private Vector2 vectorToBase;
 
-    private int bossHP = 10;
+    private int bossHP = 50;
     private int bossHPMax = 50;
 
     new Rigidbody2D rigidbody2D;
@@ -82,6 +82,7 @@ public class Boss : MonoBehaviour
                 Attack2();
                 break;
             case Behavior.Att3:
+                Attack3();
                 break;
             case Behavior.Att4:
                 break;
@@ -194,7 +195,22 @@ public class Boss : MonoBehaviour
 
     private void Attack3()
     {
+        MoveTowardsBase();
+        attackTimer += Time.deltaTime;
+        if (attackTimer > attackTimerMax*2)
+        {
+            attackTimer = 0;
+            shootDirection = new Vector2(-transform.position.x, 0).normalized;
+            float angleSpan = 111f;
+            float particlesToShoot = 8f;
 
+            for (int i = 0; i < particlesToShoot; i++)
+            {
+                Vector2 shootParticleDirection = Quaternion.Euler(0, 0, angleSpan / particlesToShoot * (i - particlesToShoot / 2f)) * shootDirection;
+                GameManager.IsWhat particleIsWhat = (GameManager.IsWhat)UnityEngine.Random.Range(0, 3);
+                Particle.SpawnParticle(GameManager.GetParticleSOFromIsWhat(particleIsWhat), (Vector2)this.transform.position + shootParticleDirection * 8, shootParticleDirection, true, 10);
+            }
+        }
     }
 
 

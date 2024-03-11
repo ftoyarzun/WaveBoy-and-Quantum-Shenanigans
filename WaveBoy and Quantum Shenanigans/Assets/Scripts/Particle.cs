@@ -158,7 +158,7 @@ public class Particle : MonoBehaviour
 
     public static void SpawnParticle(ParticleSO particleSO, Vector2 position, Vector2 direction, bool isEnemy, float force = 400)
     {
-        Particle particle = Instantiate(particleSO.prefab, position, Quaternion.identity, ParticleManager.instance.transform);
+        Particle particle = Instantiate(particleSO.prefab, position, Quaternion.identity, ParticleManager.Instance.transform);
         particle.Starter(isEnemy, 0, particleSO.isWhat);
         particle.GetComponent<Rigidbody2D>().AddForce(direction * force);
     }

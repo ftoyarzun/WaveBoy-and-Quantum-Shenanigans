@@ -15,7 +15,7 @@ public class UIAssistant : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI assistantText;
     [SerializeField] private TextWriter textWriter;
-    [SerializeField] private GameObject scientistVisuals;
+    [SerializeField] private ScientistVisuals scientistVisuals;
 
     private int stringShowingIndex = 0;
 
@@ -92,6 +92,23 @@ public class UIAssistant : MonoBehaviour
         "It has a lot more mass than an electron, therefore it should last longer in there"
     };
 
+    private string[] DiedString = new string[]
+    {
+        "Scientist: The glow, it is fading away...",
+        "No! Come back! Please...",
+    };
+
+    private string[] Boss2String = new string[]
+    {
+        "Scientist: I will turn off the particle emitter...",
+        "That is interesting, it is still glowing, and it looks like it is moving",
+        "is it writting something?",
+        "'Thanks for playing?'",
+        "who is playing? WHY DO YOU SAY 'Thanks for playing'!",
+        TRIGGER_STRING,
+        "What is happening to me! I'm shrinking aggggg"
+    };
+
 
     private void Awake()
     {
@@ -124,6 +141,9 @@ public class UIAssistant : MonoBehaviour
             case GameManager.PlayingState.Boss1:
                 break;
             case GameManager.PlayingState.Boss2:
+                scientistVisuals.ShrinkScientist();
+                break;
+            case GameManager.PlayingState.Died:
                 break;
         }
     }
@@ -156,6 +176,10 @@ public class UIAssistant : MonoBehaviour
                     DisplayText(Boss1String);
                     break;
                 case GameManager.PlayingState.Boss2:
+                    DisplayText(Boss2String);
+                    break;
+                case GameManager.PlayingState.Died:
+                    DisplayText(DiedString);
                     break;
             }
         }

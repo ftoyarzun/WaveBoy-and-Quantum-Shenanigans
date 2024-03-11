@@ -47,21 +47,27 @@ public class GameManager : MonoBehaviour
         Fase5,
         Fase6,
         Boss1,
-        Boss2
+        Boss2,
+        Died
     }
 
     public static GameManager Instance { get; private set; }
 
     public event EventHandler OnPlayingStateChanged;
-    
-    
-    private GameState gameState;
-    private PlayingState playingState = PlayingState.Fase1;
+    public event EventHandler OnGamePaused;
 
+
+
+    private GameState gameState;
+
+    private PlayingState playingState = PlayingState.Fase1;
+    private PlayingState lastPlayingState = PlayingState.Fase1;
 
     private static bool gameIsPaused;
     private bool faseStarting = true;
     private bool bossfaseStarting = true;
+    private bool diedStarting = true;
+    private bool bossfase2Starting = true;
 
 
     public int highscore = 0;
@@ -82,6 +88,8 @@ public class GameManager : MonoBehaviour
     private float fase5Timer;
     private float fase6Timer;
     private float boss1Timer;
+    private float boss2Timer;
+    private float diedTimer;
 
     private float fase1TimerMax = 2f;
     private float fase2TimerMax = 3f;
@@ -89,6 +97,8 @@ public class GameManager : MonoBehaviour
     private float fase4TimerMax = 10f;
     private float fase5TimerMax = 20f;
     private float fase6TimerMax = 20f;
+    private float boss2TimerMax = 2f;
+    private float diedTimerMax = 2;
 
     private float fase3TimerMax_1 = 10;
     private float fase3TimerMax_2 = 20;
@@ -129,6 +139,13 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         ResetCombo();
+        Player.Instance.OnPlayerDied += Player_OnPlayerDied;
+    }
+
+    private void Player_OnPlayerDied(object sender, EventArgs e)
+    {
+        playingState = PlayingState.Died;
+        OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     // Update is called once per frame
@@ -158,14 +175,11 @@ public class GameManager : MonoBehaviour
                 GameManagerBoss1();
                 break;
             case GameManager.PlayingState.Boss2:
+                GameManagerBoss2();
                 break;
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            gameIsPaused = !gameIsPaused;
-            PauseGame();
+            case GameManager.PlayingState.Died:
+                GameManagerDied();
+                break;
         }
     }
 
@@ -218,16 +232,10 @@ public class GameManager : MonoBehaviour
         Combo.text = "Current COMBO:" + combo + "\nMAX COMBO" + MaxCombo;
     }
 
-    void PauseGame()
+    public void TogglePauseGame()
     {
-        if (gameIsPaused)
-        {
-            Time.timeScale = 0f;
-        }
-        else
-        {
-            Time.timeScale = 1;
-        }
+        Time.timeScale = 1f - Time.timeScale;
+        OnGamePaused?.Invoke(this, EventArgs.Empty);
     }
 
     public void SpawnPhotons(Vector2 pos, Vector2 vel)
@@ -274,9 +282,11 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            Player.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
+            lastPlayingState = playingState;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
         {
@@ -295,10 +305,13 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            Player.Instance.Show();
             PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
+            lastPlayingState = playingState;
+            fase2Timer = 0;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
         {
@@ -316,10 +329,13 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            Player.Instance.Show();
             PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
+            lastPlayingState = playingState;
+            fase3Timer = 0;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
         {
@@ -328,7 +344,7 @@ public class GameManager : MonoBehaviour
             {
                 float randomX = UnityEngine.Random.Range(-14f, 14f);
                 float randomY = UnityEngine.Random.Range(-8f, 8f);
-                if ((fase3Timer > fase3TimerMax_3) && ParticleManager.instance.GetNumberOfParticles() == 0)
+                if ((fase3Timer > fase3TimerMax_3) && ParticleManager.Instance.GetNumberOfParticles() == 0)
                 {
                     playingState = PlayingState.Fase4;
                     faseStarting = true;
@@ -377,15 +393,18 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            Player.Instance.Show();
             PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
+            lastPlayingState = playingState;
+            fase4Timer = 0;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
         {
             fase4Timer += Time.deltaTime;
-            if ((fase4Timer > fase4TimerMax_3) && ParticleManager.instance.GetNumberOfParticles() == 0)
+            if ((fase4Timer > fase4TimerMax_3) && ParticleManager.Instance.GetNumberOfParticles() == 0)
             {
                 playingState = PlayingState.Fase5;
                 faseStarting = true;
@@ -431,10 +450,13 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            Player.Instance.Show();
             PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
+            lastPlayingState = playingState;
+            fase5Timer = 0;
         }
 
         else if (!UIAssistant.Instance.GetHasToDispayText())
@@ -442,7 +464,7 @@ public class GameManager : MonoBehaviour
             fase5Timer += Time.deltaTime;
             if (timerToSpawnParticles < Time.time)
             {
-                if ((fase5Timer > fase5TimerMax) && ParticleManager.instance.GetNumberOfParticles() == 0)
+                if ((fase5Timer > fase5TimerMax) && ParticleManager.Instance.GetNumberOfParticles() == 0)
                 {
                     playingState = PlayingState.Fase6;
                     faseStarting = true;
@@ -470,10 +492,13 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            Player.Instance.Show();
             PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
+            lastPlayingState = playingState;
+            fase6Timer = 0;
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
         {
@@ -482,7 +507,7 @@ public class GameManager : MonoBehaviour
             {
                 float randomX = UnityEngine.Random.Range(-14f, 14f);
                 float randomY = UnityEngine.Random.Range(-8f, 8f);
-                if ((fase6Timer > fase6TimerMax_3) && ParticleManager.instance.GetNumberOfParticles() == 0)
+                if ((fase6Timer > fase6TimerMax_3) && ParticleManager.Instance.GetNumberOfParticles() == 0)
                 {
                     playingState = PlayingState.Boss1;
                     faseStarting = true;
@@ -531,18 +556,22 @@ public class GameManager : MonoBehaviour
     {
         if (faseStarting)
         {
+            BossHPUI.Instance.Hide();
+            Player.Instance.Show();
             PlayerHitPointManager.Instance.Show();
             UIAssistant.Instance.SetHasToDispayText();
             Player.Instance.ResetPlayerHitPoints();
             faseStarting = false;
+            bossfaseStarting = true;
+            lastPlayingState = playingState;
         }
         else if (bossfaseStarting && !UIAssistant.Instance.GetHasToDispayText())
         {
             bossfaseStarting = false;
             boss = Instantiate(bossPrefab, bossSpawnPosition.transform.position, Quaternion.identity);
             boss.SetBasePosition(bossBasePosition);
-            BossHPUI.Instance.Show();
             BossHPUI.Instance.SetBoss(boss);
+            BossHPUI.Instance.Show();
         }
         else if (!UIAssistant.Instance.GetHasToDispayText())
         {
@@ -555,6 +584,78 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void GameManagerBoss2()
+    {
+        if (faseStarting)
+        {
+            BossHPUI.Instance.Hide();
+            Player.Instance.Show();
+            PlayerHitPointManager.Instance.Hide();
+            Player.Instance.ResetPlayerHitPoints();
+            UIAssistant.Instance.SetHasToDispayText();
+            faseStarting = false;
+            bossfaseStarting = true;
+            lastPlayingState = playingState;
+            boss2Timer = 0;
+        }
+
+        else if (boss2Timer < boss2TimerMax)
+        {
+            boss2Timer += Time.deltaTime;
+        }
+
+        else if (boss2Timer > boss2TimerMax)
+        {
+            CutsceneManager.Instance.Show();
+        }
+
+        else if (!UIAssistant.Instance.GetHasToDispayText())
+        {
+            Debug.Log("Finished");
+        }
+
+    }
+
+    private void GameManagerDied()
+    {
+        if (faseStarting)
+        {
+            PlayerHitPointManager.Instance.Hide();
+            Player.Instance.Hide();
+            Player.Instance.ResetPlayerHitPoints();
+            faseStarting = false;
+        }
+        else if (diedTimer < diedTimerMax)
+        {
+            diedTimer += Time.deltaTime;
+        }
+        else if (diedStarting)
+        {
+            diedStarting = false;
+            ParticleManager.Instance.DestroyParticles();
+            if (boss != null) { Destroy(boss.gameObject); }
+            CutsceneManager.Instance.Show();
+            UIAssistant.Instance.SetHasToDispayText();
+
+        }
+
+        else if (!CutsceneManager.Instance.IsPlaying())
+        {
+            DiedScreenUI.Instance.Show();
+            //CutsceneManager.Instance.Hide();
+        }
+    }
+
+
+
+    private void StartingFase()
+    {
+        Player.Instance.Show();
+        UIAssistant.Instance.SetHasToDispayText();
+        Player.Instance.ResetPlayerHitPoints();
+        faseStarting = false;
+        lastPlayingState = playingState;
+    }
 
     private void SpawnLaser(bool right, bool up, float angle)
     {
@@ -584,5 +685,14 @@ public class GameManager : MonoBehaviour
             }
             timerToSpawnParticles = Time.time + 1 / Spawnrate * 2;
         }
+    }
+
+    public void RestartFromLastCheckpoint()
+    {
+        playingState = lastPlayingState;
+        faseStarting = true;
+        OnPlayingStateChanged?.Invoke(this, EventArgs.Empty);
+        diedTimer = 0;
+        diedStarting = true;
     }
 }

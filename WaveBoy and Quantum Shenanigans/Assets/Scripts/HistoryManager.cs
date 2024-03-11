@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HistoryManager : MonoBehaviour
 {
@@ -36,6 +37,8 @@ public class HistoryManager : MonoBehaviour
 
     private List<TextMeshProUGUI> textList = new List<TextMeshProUGUI>();
 
+    [SerializeField] private Button skipIntroButton;
+
     private void Awake()
     {
         textList.Add(fisrtText);
@@ -44,6 +47,11 @@ public class HistoryManager : MonoBehaviour
         textList.Add(fourthText);
         textList.Add(fifthText);
         timerToWaitBetweenText = timerToWaitBetweenTextMax;
+
+        skipIntroButton.onClick.AddListener(() =>
+        {
+            Loader.Load(Loader.Scene.GameScene);
+        });
     }
 
     private void Update()
